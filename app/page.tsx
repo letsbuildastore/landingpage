@@ -17,7 +17,7 @@ function Brand() {
         <ShoppingBag size={23} strokeWidth={2.2} />
       </span>
       <span>
-        let’s build<span className="brand-last">a.store</span>
+        let’s build<span className="brand-last">a store</span>
       </span>
     </a>
   );
