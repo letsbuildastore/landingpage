@@ -1,0 +1,26 @@
+name: Check pull request
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        base-path: ['', '/preview']
+    env:
+      NEXT_PUBLIC_BASE_PATH: ${{ matrix.base-path }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build
+      - run: npm run verify:export
