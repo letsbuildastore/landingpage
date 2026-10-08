@@ -21,27 +21,15 @@ npm run verify:export  # Check exported assets and links
 
 `npm run format` applies the project's formatting rules. `npm start` runs the existing Cloudflare Worker preview after a build; production static hosts only need `dist/client`.
 
-## Cloudflare Pages
+## GitHub Pages with Cloudflare DNS
 
-This repository is prepared for Cloudflare Pages' Git integration. It produces a static export in `dist/client`; it does not need a Worker, database, or build secrets. The old GitHub Pages deployment workflow and `CNAME` file are not used.
+The site is hosted for free by GitHub Pages from this public repository. Cloudflare manages the domain's DNS; it does not build or host the site. The GitHub Actions workflow builds the site and publishes only the static export from `dist/client`.
 
-When connecting the repository in Cloudflare, use these build settings:
+The workflow runs on pushes to `main` and can also be started manually. Pull requests run checks and export verification for the root path and `/preview` through `.github/workflows/check.yml`.
 
-| Setting | Value |
-| --- | --- |
-| Git repository | `letsbuildastore/landingpage` |
-| Production branch | `main` |
-| Root directory | `/` (repository root) |
-| Build command | `npm run check && npm run build && npm run verify:export` |
-| Build output directory | `dist/client` |
-| Node.js | `22.13.0` (pinned in `.node-version`) |
-| `NEXT_PUBLIC_BASE_PATH` | Leave unset for the custom domain root |
+In the repository's **Settings → Pages**, select **GitHub Actions** as the publishing source and set the custom domain to `letsbuilda.store`. GitHub Pages custom domains for Actions deployments are managed in repository settings; a `CNAME` file in the repository is not required.
 
-In **Workers & Pages**, create a **Pages** project, connect the GitHub repository, and enter the settings above. Do not use the stock Next.js output directory: this project uses Vinext's static export and writes to `dist/client`.
-
-After the first deployment succeeds, open the project's **Custom domains** settings and add `letsbuilda.store`. Because this is an apex domain, the `letsbuilda.store` zone must be active in the same Cloudflare account. If Cloudflare asks you to change nameservers, use the nameservers Cloudflare provides at the domain registrar. Complete domain setup from the Pages dashboard so Cloudflare can attach the hostname and create its DNS record. Keep existing mail-related DNS records when making DNS changes.
-
-GitHub Actions checks and verifies the root-path static export on pull requests and pushes to `main`. Cloudflare Pages Git integration deploys production from `main` and creates preview deployments for other branches.
+Cloudflare should remain the DNS provider for `letsbuilda.store`, with the apex records pointed at GitHub Pages. The GitHub Pages workflow publishes `dist/client`, uses Node.js `22.13.0` from `.node-version`, and leaves `NEXT_PUBLIC_BASE_PATH` unset for the domain root. No runtime server, Cloudflare Pages project, or deployment secrets are needed.
 
 ## Other static hosting
 
@@ -62,7 +50,8 @@ The existing `.openai/hosting.json` and Vite configuration retain compatibility 
 - `lib/site.ts`: build-time prefix for public asset URLs.
 - `public/`: favicon, responsive WebP images, and the original PNG.
 - `components/ui/`: shared component library retained for future work.
-- `.github/workflows/check.yml`: pull-request and main-branch checks for the static export.
+- `.github/workflows/check.yml`: pull-request checks for the static export.
+- `.github/workflows/static.yml`: build and deploy the static export to GitHub Pages.
 - `scripts/verify-export.mjs`: static deployment smoke checks.
 - `scripts/prepare-export.mjs`: automatically normalizes Vinext's prefixed asset directories after each build so repository-hosted assets resolve correctly.
 

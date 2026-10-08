@@ -1,18 +1,19 @@
-name: Build static site
+name: Check static site
 
 on:
   pull_request:
-  push:
-    branches: [main]
 
 permissions:
   contents: read
 
 jobs:
-  build:
+  check:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        base-path: ['', '/preview']
     env:
-      NEXT_PUBLIC_BASE_PATH: ''
+      NEXT_PUBLIC_BASE_PATH: ${{ matrix.base-path }}
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v4
