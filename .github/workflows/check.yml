@@ -1,24 +1,23 @@
-name: Check pull request
+name: Build static site
 
 on:
   pull_request:
+  push:
+    branches: [main]
 
 permissions:
   contents: read
 
 jobs:
-  check:
+  build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        base-path: ['', '/preview']
     env:
-      NEXT_PUBLIC_BASE_PATH: ${{ matrix.base-path }}
+      NEXT_PUBLIC_BASE_PATH: ''
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version-file: .node-version
           cache: npm
       - run: npm ci
       - run: npm run check

@@ -41,7 +41,7 @@ In **Workers & Pages**, create a **Pages** project, connect the GitHub repositor
 
 After the first deployment succeeds, open the project's **Custom domains** settings and add `letsbuilda.store`. Because this is an apex domain, the `letsbuilda.store` zone must be active in the same Cloudflare account. If Cloudflare asks you to change nameservers, use the nameservers Cloudflare provides at the domain registrar. Complete domain setup from the Pages dashboard so Cloudflare can attach the hostname and create its DNS record. Keep existing mail-related DNS records when making DNS changes.
 
-Pull requests run checks and export verification for both `/` and `/preview` through `.github/workflows/check.yml`. Production deployments are handled by Cloudflare on pushes to `main`.
+GitHub Actions checks and verifies the root-path static export on pull requests and pushes to `main`. Cloudflare Pages Git integration deploys production from `main` and creates preview deployments for other branches.
 
 ## Other static hosting
 
@@ -62,7 +62,7 @@ The existing `.openai/hosting.json` and Vite configuration retain compatibility 
 - `lib/site.ts`: build-time prefix for public asset URLs.
 - `public/`: favicon, responsive WebP images, and the original PNG.
 - `components/ui/`: shared component library retained for future work.
-- `.github/workflows/check.yml`: pull-request checks and static export verification.
+- `.github/workflows/check.yml`: pull-request and main-branch checks for the static export.
 - `scripts/verify-export.mjs`: static deployment smoke checks.
 - `scripts/prepare-export.mjs`: automatically normalizes Vinext's prefixed asset directories after each build so repository-hosted assets resolve correctly.
 
